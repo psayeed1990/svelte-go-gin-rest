@@ -47,6 +47,36 @@
 			throw new Error(text);
 		}
 	}
+
+	//content editable
+	let name;
+	let email;
+	let password;
+	let updating = false;
+
+	async function updateUser() {
+		updating = true;
+		msg = 'Updating...';
+		const res = await fetch(`http://psgqtnzaim.us08.qoddiapp.com/v1/users/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				name,
+				email,
+				password
+			})
+		});
+		const { User } = await res.json();
+		if (res.ok) {
+			msg = 'User Updated';
+			updating = false;
+			return User;
+		} else {
+			throw new Error(text);
+		}
+	}
 </script>
 
 <Menu />
@@ -55,12 +85,22 @@
 		<p>...waiting</p>
 	{:then User}
 		<li>
-			<a href={User.id}>{User.name}</a>
+			<a href={User.id}>{User.id}</a>
 			<ul>
 				{#if !deleted}
-					<li>Email: {User.email}</li>
-					<li>Password: {User.password}</li>
+					<li>Name: <span contenteditable="true" bind:innerHTML={name}>{User.name}</span></li>
+					<li>Email: <span contenteditable="true" bind:innerHTML={email}>{User.email}</span></li>
+					<li>
+						Password: <span contenteditable="true" bind:innerHTML={password}>{User.password}</span>
+					</li>
 				{/if}
+
+				{#if !updating}
+					<li class="update" on:click={updateUser}>Update {User.name}</li>
+				{:else}
+					<li>...{msg}</li>
+				{/if}
+
 				{#if !deleting}
 					<li class="delete" on:click={deleteUser}>Delete {User.name}</li>
 				{:else}
@@ -77,6 +117,13 @@
 	.delete {
 		cursor: pointer;
 		background-color: brown;
+		color: wheat;
+		width: max-content;
+		padding: 5px;
+	}
+	.update {
+		cursor: pointer;
+		background-color: green;
 		color: wheat;
 		width: max-content;
 		padding: 5px;
