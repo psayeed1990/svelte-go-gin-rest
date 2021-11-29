@@ -1,7 +1,4 @@
 <script context="module">
-	//disable ssr
-	export const router = false;
-	export const prerender = false;
 	//svelte dynamic route slug
 	export async function load(ctx) {
 		let id = ctx.page.params.id;
