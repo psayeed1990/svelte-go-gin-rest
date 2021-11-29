@@ -23,6 +23,30 @@
 	}
 
 	const promise = getUser();
+
+	//delete user
+	let deleting = false;
+	let msg = '';
+	let deleted = false;
+	async function deleteUser() {
+		deleting = true;
+		msg = 'Deleting...';
+		const res = await fetch(`http://psgqtnzaim.us08.qoddiapp.com/v1/users/${id}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		const { User } = await res.json();
+
+		if (res.ok) {
+			msg = 'User deleted';
+			deleted = true;
+			return (window.location.href = '/');
+		} else {
+			throw new Error(text);
+		}
+	}
 </script>
 
 <Menu />
@@ -33,11 +57,28 @@
 		<li>
 			<a href={User.id}>{User.name}</a>
 			<ul>
-				<li>Email: {User.email}</li>
-				<li>Password: {User.password}</li>
+				{#if !deleted}
+					<li>Email: {User.email}</li>
+					<li>Password: {User.password}</li>
+				{/if}
+				{#if !deleting}
+					<li class="delete" on:click={deleteUser}>Delete {User.name}</li>
+				{:else}
+					<li>...{msg}</li>
+				{/if}
 			</ul>
 		</li>
 	{:catch error}
 		<p style="color: red">{error.message}</p>
 	{/await}
 </ul>
+
+<style>
+	.delete {
+		cursor: pointer;
+		background-color: brown;
+		color: wheat;
+		width: max-content;
+		padding: 5px;
+	}
+</style>

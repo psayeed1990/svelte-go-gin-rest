@@ -21,8 +21,8 @@
 		});
 		const body = await response.json();
 		if (response.status !== 200) throw Error(body.message);
-		console.log(body);
-		return body;
+		console.log(body['New User']);
+		return window.location.replace(`/${body['New User'].id}`);
 	}
 </script>
 
